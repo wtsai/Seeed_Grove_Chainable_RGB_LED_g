@@ -1,21 +1,21 @@
 /*
 Copyright (C) 2012 Paulo Marques (pjp.marques@gmail.com)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of 
+Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in
 the Software without restriction, including without limitation the rights to
 use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
 the Software, and to permit persons to whom the Software is furnished to do so,
 subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all 
+The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
 FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN 
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
@@ -31,12 +31,12 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 class ChainableLED
 {
-    
+
 public:
     ChainableLED(byte clk_pin, byte data_pin, byte number_of_leds);
-    
+
     ~ChainableLED();
-    
+
     void setColorRGB(byte led, byte red, byte green, byte blue);
     void setColorHSB(byte led, float hue, float saturation, float brightness);
 
@@ -45,43 +45,50 @@ private:
     byte _clk_pin;
     byte _data_pin;
     byte _num_leds;
-    
+
     byte* _led_state;
-    
+
     void clk(void);
     void sendByte(byte b);
     void sendColor(byte red, byte green, byte blue);
-    
-public: // api for 
+
+public: // api for
 
     ChainableLED(){};
-    
+
     /*
-     * Function Name: ChainableRGBLEDWrite
+     * Function Name: ChainableRGBLEDInit
      * Input - pinClk: pin name of clock
      *         pinDta: pin name of data
-     *         led_num: how many leds
+     * Return - NULL
+     */
+    void ChainableRGBLEDInit(int pinClk, int pinDta)
+    {
+        _clk_pin = pinClk;
+        _data_pin = pinDta;
+
+        pinMode(_clk_pin, OUTPUT);
+        pinMode(_data_pin, OUTPUT);
+    }
+
+    /*
+     * Function Name: ChainableRGBLEDWrite
+     * Input - led_num: how many leds
      *         red, green, blue - RGB value of the color
      * Return - NULL
      */
-    void ChainableRGBLEDWrite(int pinClk, int pinDta, int led_num, unsigned char red, unsigned char green, unsigned char blue)
+    void ChainableRGBLEDWrite(int led_num, unsigned char red, unsigned char green, unsigned char blue)
     {
-        
-        _clk_pin = pinClk;
-        _data_pin = pinDta;
         _num_leds = led_num;
-        
+
         static unsigned char __r=0;
         static unsigned char __g=0;
         static unsigned char __b=0;
-        
+
         if(red==__r && green==__g && blue==__b)return;
         __r = red;
         __g = green;
         __b = blue;
-        
-        pinMode(_clk_pin, OUTPUT);
-        pinMode(_data_pin, OUTPUT);
 
         _led_state = (byte*) calloc(led_num*3, sizeof(byte));
 
@@ -93,4 +100,3 @@ public: // api for
 };
 
 #endif
-
