@@ -62,7 +62,7 @@ public: // api for
      *         pinDta: pin name of data
      * Return - NULL
      */
-    void ChainableRGBLEDInit(int pinClk, int pinDta)
+    void init(int pinClk, int pinDta)
     {
         _clk_pin = pinClk;
         _data_pin = pinDta;
